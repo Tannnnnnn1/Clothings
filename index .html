@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M'm Jacksons Clothes</title>
+
+  <!-- GOOGLE FONTS -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <!-- GSAP LIBRARIES -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ----------------- GLOBAL RESET ----------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ----------------- BODY ----------------- */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #ffffff, #f9f4ed 60%);
+      color: #333333;
+      overflow-x: hidden;
+    }
+
+    /* ----------------- SCROLL PROGRESS BAR ----------------- */
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0%;
+      background: #888888;
+      z-index: 9999;
+    }
+
+    /* ----------------- NAVBAR ----------------- */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.25);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      z-index: 1000;
+    }
+
+    .navbar h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+    }
+
+    .navbar a {
+      color: #333333;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ----------------- SECTIONS ----------------- */
+    section {
+      min-height: 100vh;
+      padding: 120px 20px 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    /* ----------------- HERO ----------------- */
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 6vw;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #555555;
+    }
+
+    /* ----------------- PRODUCTS CONTAINER ----------------- */
+    #products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      width: 100%;
+    }
+
+    .sticky-section {
+      flex: 0 0 calc(50% - 20px); /* 2 per row */
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 20px;
+      margin-bottom: 20px;
+
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      border-radius: 28px;
+      padding: 30px 25px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .product-img {
+      width: 180px;
+      border-radius: 20px;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
+    }
+
+    .product-text {
+      max-width: 300px;
+      text-align: left;
+    }
+
+    .product-text h2 {
+      margin-bottom: 8px;
+    }
+
+    .add-btn {
+      margin-top: 12px;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 30px;
+      background: #ffffff;
+      color: #555555;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .add-btn:hover {
+      background: #f0f0f0;
+    }
+
+    /* ----------------- CART BUTTON ----------------- */
+    #cart-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #ffffff;
+      color: #555555;
+      padding: 12px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      z-index: 1001;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ----------------- CART OVERLAY ----------------- */
+    #cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1000;
+      transition: 0.3s;
+    }
+
+    /* ----------------- CART MODAL ----------------- */
+    #cart-modal {
+      position: fixed;
+      top: 0;
+      right: -380px;
+      width: 340px;
+      height: 100%;
+      background: #ffffff;
+      color: #333333;
+      padding: 25px;
+      z-index: 1002;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+      transition: 0.4s;
+      overflow-y: auto;
+    }
+
+    .checkout-btn {
+      display: block;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 30px;
+      background: #25D366;
+      color: #ffffff;
+      text-decoration: none;
+      text-align: center;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .checkout-btn:hover {
+      background: #20c356;
+    }
+
+    /* ----------------- SHIPPING GIF ----------------- */
+    #gif-shipping {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(230, 230, 230, 0.95));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 99999;
+      border-radius: 36px;
+      overflow: hidden;
+    }
+
+    #gif-shipping::before {
+      content: "";
+      position: absolute;
+      inset: -20px;
+      border-radius: 36px;
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.45), transparent 70%);
+      filter: blur(18px);
+      opacity: 0.6;
+      z-index: -1;
+    }
+
+    @keyframes floatSoft {
+      0% {
+        transform: translateY(-6px);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+
+      100% {
+        transform: translateY(-6px);
+      }
+    }
+
+    #gif-shipping img {
+      width: 320px;
+      max-width: 85%;
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.9);
+      background-image: linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+      padding: 16px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      image-rendering: auto;
+      transform: translateY(-6px);
+      animation: floatSoft 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* ----------------- RESPONSIVE ----------------- */
+    @media (max-width: 768px) {
+      .sticky-section {
+        flex: 0 0 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="progress"></div>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <h3>M'm Jacksons Clothes</h3>
+    <div>
+      <a href="#hero">Home</a>
+      <a href="#products">Products</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <h1>M'm Jacksons Clothes</h1>
+    <p>Premium Style. Bold Confidence.</p>
+  </section>
+
+  <!-- Products -->
+  <section id="products"></section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>
+      Email: mmjacksons@gmail.com<br>
+      Phone: +91 9000000000<br>
+      Instagram: mmjacksons_official
+    </p>
+  </section>
+
+  <!-- Cart -->
+  <div id="cart-btn" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</div>
+  <div id="cart-overlay" onclick="toggleCart()"></div>
+
+  <div id="cart-modal">
+    <h3>Your Cart</h3>
+    <div id="cart-items"></div>
+    <p><strong>Total Rs. <span id="cart-total">0</span></strong></p>
+    <a href="#" class="checkout-btn" onclick="return checkoutWhatsApp()">Checkout on WhatsApp</a>
+  </div>
+
+  <!-- Shipping GIF -->
+  <div id="gif-shipping">
+    <img src="Delivery.gif" alt="Shipping GIF">
+  </div>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // 30 products
+    const productsData = [
+      { name: "Classic White Shirt", price: 1200, img: "1.jpg" },
+      { name: "Blue Denim Jacket", price: 2500, img: "2.jpg" },
+      { name: "Black Slim Trousers", price: 1500, img: "3.jpg" },
+      { name: "Red Hoodie", price: 1800, img: "4.jpg" },
+      { name: "Floral Summer Dress", price: 2200, img: "5.jpg" },
+      { name: "Casual Polo Tee", price: 900, img: "6.jpg" },
+      { name: "Leather Jacket", price: 3500, img: "7.jpg" },
+      { name: "Chinos Pants", price: 1400, img: "8.jpg" },
+      { name: "Grey Sweatshirt", price: 1300, img: "9.jpg" },
+      { name: "Black Leather jacket", price: 1800, img: "100.jpg" },
+      { name: "White Tank Top", price: 800, img: "11.jpg" },
+      { name: "Beige Trench Coat", price: 3200, img: "12.jpg" },
+      { name: "Striped Shirt", price: 1100, img: "13.jpg" },
+      { name: "Plaid Shirt", price: 1150, img: "14.jpg" },
+      { name: "Navy Blazer", price: 2800, img: "15.jpg" },
+      { name: "Green Cargo Pants", price: 1500, img: "16.jpg" },
+      { name: "Denim Shorts", price: 950, img: "17.jpg" },
+      { name: "White Hoodie", price: 1750, img: "18.jpg" },
+      { name: "Pastel Dress", price: 2100, img: "19.jpg" },
+      { name: "Casual Shirt", price: 1050, img: "20.jpg" },
+      { name: "Leather Pants", price: 3200, img: "21.jpg" },
+      { name: "Black Hoodie", price: 1800, img: "22.jpg" },
+      { name: "Floral Maxi Dress", price: 2500, img: "23.jpg" },
+      { name: "Beige Cardigan", price: 1500, img: "24.jpg" },
+      { name: "Blue T-shirt", price: 900, img: "25.jpg" },
+      { name: "Pink Hoodie", price: 1750, img: "26.jpg" },
+      { name: "Summer Shorts", price: 950, img: "27.jpg" },
+      { name: "Checked Pants", price: 1400, img: "28.jpg" },
+      { name: "Brown Jacket", price: 2800, img: "29.jpg" },
+      { name: "White Linen Shirt", price: 1200, img: "30.jpg" }
+    ];
+
+    const productsContainer = document.getElementById("products");
+
+    productsData.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "sticky-section";
+      div.innerHTML = `
+        <img src="${p.img}" class="product-img" alt="${p.name}">
+        <div class="product-text">
+          <h2>${p.name}</h2>
+          <button class="add-btn" onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>
+        </div>
+      `;
+      productsContainer.appendChild(div);
+    });
+
+    let cart = [];
+    let cartOpen = false;
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      updateCart();
+    }
+
+    function updateCart() {
+      let total = 0;
+      const items = document.getElementById("cart-items");
+      items.innerHTML = "";
+      cart.forEach((item, index) => {
+        total += item.price;
+        items.innerHTML += `${item.name} - Rs.${item.price} <span onclick="removeItem(${index})">❌</span><br>`;
+      });
+      document.getElementById("cart-count").innerText = cart.length;
+      document.getElementById("cart-total").innerText = total;
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function toggleCart() {
+      document.getElementById("cart-modal").style.right = cartOpen ? "-380px" : "0";
+      document.getElementById("cart-overlay").style.opacity = cartOpen ? "0" : "1";
+      document.getElementById("cart-overlay").style.pointerEvents = cartOpen ? "none" : "auto";
+      cartOpen = !cartOpen;
+    }
+
+    function checkoutWhatsApp() {
+      if (cart.length === 0) return false;
+      let message = "Hello, I want to order:%0A";
+      cart.forEach(p => {
+        message += "- " + p.name + " Rs." + p.price + "%0A";
+      });
+      document.getElementById("gif-shipping").style.opacity = "1";
+      setTimeout(() => {
+        window.location.href = "https://wa.me/918605463560?text=" + message;
+      }, 5000);
+      return false;
+    }
+
+    window.addEventListener("scroll", function () {
+      const sc = document.documentElement.scrollTop;
+      const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      document.getElementById("progress").style.width = (sc / h) * 100 + "%";
+    });
+
+    gsap.from(".hero h1", { opacity: 0, y: 100, duration: 1 });
+    gsap.utils.toArray(".sticky-section").forEach(sec => {
+      gsap.from(sec, {
+        scrollTrigger: { trigger: sec, start: "top 80%" },
+        opacity: 0,
+        y: 80,
+        duration: 1
+      });
+    });
+  </script>
+
+</body>
+
+</html>
